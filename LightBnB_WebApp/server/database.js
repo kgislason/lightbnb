@@ -1,6 +1,4 @@
-require('dotenv').config()
-const properties = require('./json/properties.json');
-const users = require('./json/users.json');
+require('dotenv').config();
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -39,7 +37,7 @@ const getUserWithEmail = function(email) {
       console.log(err.message);
     });
   
-}
+};
 exports.getUserWithEmail = getUserWithEmail;
 
 /**
@@ -68,7 +66,7 @@ const getUserWithId = function(id) {
     .catch((err) => {
       console.log(err.message);
     });
-}
+};
 exports.getUserWithId = getUserWithId;
 
 
@@ -92,7 +90,7 @@ const addUser =  function(user) {
     .catch((err) => {
       console.log(err.message);
     });
-}
+};
 exports.addUser = addUser;
 
 /// Reservations
@@ -114,7 +112,7 @@ const getAllReservations = function(guest_id, limit = 10) {
     LIMIT $2;
   `;
   const values = [guest_id, limit];
- return pool
+  return pool
     .query(query, values)
     .then((result) => {
       console.log(result.rows);
@@ -124,7 +122,7 @@ const getAllReservations = function(guest_id, limit = 10) {
       console.log(err.message);
     });
 
-}
+};
 exports.getAllReservations = getAllReservations;
 
 /// Properties
@@ -135,7 +133,7 @@ exports.getAllReservations = getAllReservations;
  * @param {*} limit The number of results to return.
  * @return {Promise<[{}]>}  A promise to the properties.
  */
- const getAllProperties = function (options, limit = 10) {
+const getAllProperties = function(options, limit = 10) {
   // 1
   const queryParams = [];
   // 2
@@ -206,7 +204,7 @@ exports.getAllReservations = getAllReservations;
     .catch((err) => {
       console.log(err.message);
     });
-}
+};
 exports.getAllProperties = getAllProperties;
 
 
@@ -246,5 +244,5 @@ const addProperty = function(property) {
     .catch((err) => {
       console.log(err.message);
     });
-}
+};
 exports.addProperty = addProperty;
