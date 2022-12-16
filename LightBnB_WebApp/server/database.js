@@ -134,15 +134,18 @@ exports.getAllReservations = getAllReservations;
  * @return {Promise<[{}]>}  A promise to the properties.
  */
 const getAllProperties = function(options, limit = 10) {
-  // 1
+
+  // Create empty array to hold query parameters
   const queryParams = [];
-  // 2
+
+  // Start to build query
   let queryString = `
   SELECT properties.*, avg(property_reviews.rating) as average_rating
   FROM properties
   JOIN property_reviews ON properties.id = property_id
   `;
 
+  // Address WHERE for first filter and use AND for any that follow:
   let filter = `AND`;
   for (const i in queryString) {
     if (i === 0) {
@@ -150,12 +153,13 @@ const getAllProperties = function(options, limit = 10) {
     }
   }
 
+  // If filter by owner
   if (options.owner_id) {
     queryParams.push(`${options.owner_id}`);
     queryString += `${filter} owner_id = $${queryParams.length} `;
   }
 
-  // 3
+  // If filter by city
   if (options.city) {
     queryParams.push(`%${options.city}%`);
     queryString += `${filter} city LIKE $${queryParams.length} `;
@@ -188,17 +192,13 @@ const getAllProperties = function(options, limit = 10) {
     queryString += `HAVING avg(rating) >= $${queryParams.length} `;
   }
 
-  // 4
+  // Add limit to end of query
   queryParams.push(limit);
   queryString += `
-  ORDER BY cost_per_night
-  LIMIT $${queryParams.length};
+    ORDER BY cost_per_night
+    LIMIT $${queryParams.length};
   `;
 
-  // 5
-  // console.log(queryString, queryParams);
-
-  // 6
   return pool.query(queryString, queryParams)
     .then((res) => res.rows)
     .catch((err) => {
